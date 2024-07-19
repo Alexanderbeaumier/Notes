@@ -18,7 +18,22 @@
           "containerPort": 8080,
           "hostPort": 8080
         }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/note-taking-app",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "environment": [
+        {
+          "name": "PORT",
+          "value": "8080"
+        }
       ]
     }
   ]
 }
+
