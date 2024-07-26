@@ -53,12 +53,12 @@ jobs:
           "requiresCompatibilities": ["FARGATE"],
           "cpu": "256",
           "memory": "512",
-          "executionRoleArn": "arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskExecutionRole",
-          "taskRoleArn": "arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskRole",
+          "executionRoleArn": "arn:aws:iam::314282564487:role/ecsTaskExecutionRole",
+          "taskRoleArn": "arn:aws:iam::314282564487:role/ecsTaskRole",
           "containerDefinitions": [
             {
-              "name": "notes-container",
-              "image": "PLACEHOLDER_IMAGE",
+              "name": "notes",
+              "image": "314282564487.dkr.ecr.us-east-1.amazonaws.com/notes:latest",
               "essential": true,
               "memory": 512,
               "cpu": 256,
