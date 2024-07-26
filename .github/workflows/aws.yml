@@ -1,4 +1,3 @@
-
 name: Deploy to Amazon ECS
 
 on:
@@ -49,9 +48,9 @@ jobs:
     - name: Register new task definition
       id: register-task-def
       run: |
-        jq --arg IMAGE_URI "$IMAGE_URI" '.containerDefinitions[0].image = $IMAGE_URI' task-definition.json > new-task-definition.json
+        jq --arg IMAGE_URI "$IMAGE_URI" '.containerDefinitions[0].image = $IMAGE_URI' new-task-definition.json > updated-task-definition.json
         aws ecs register-task-definition \
-          --cli-input-json file://new-task-definition.json \
+          --cli-input-json file://updated-task-definition.json \
           --region $AWS_REGION
 
     - name: Deploy Amazon ECS task definition
