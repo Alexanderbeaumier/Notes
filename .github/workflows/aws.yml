@@ -45,6 +45,47 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
+    - name: Create task definition file
+      run: |
+        echo '{
+          "family": "note-taking-app",
+          "networkMode": "awsvpc",
+          "requiresCompatibilities": ["FARGATE"],
+          "cpu": "256",
+          "memory": "512",
+          "executionRoleArn": "arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskExecutionRole",
+          "taskRoleArn": "arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskRole",
+          "containerDefinitions": [
+            {
+              "name": "notes-container",
+              "image": "PLACEHOLDER_IMAGE",
+              "essential": true,
+              "memory": 512,
+              "cpu": 256,
+              "portMappings": [
+                {
+                  "containerPort": 8080,
+                  "hostPort": 8080
+                }
+              ],
+              "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                  "awslogs-group": "/ecs/note-taking-app",
+                  "awslogs-region": "us-east-1",
+                  "awslogs-stream-prefix": "ecs"
+                }
+              },
+              "environment": [
+                {
+                  "name": "PORT",
+                  "value": "8080"
+                }
+              ]
+            }
+          ]
+        }' > new-task-definition.json
+
     - name: Register new task definition
       id: register-task-def
       run: |
