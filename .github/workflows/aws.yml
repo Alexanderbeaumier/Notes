@@ -46,8 +46,8 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
-    - name: Debug image output
-      run: echo ${{ steps.build-image.outputs.image }}
+    - name: Output built image
+      run: echo ${{ env.image }}
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -55,7 +55,7 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+        image: ${{ env.image }}
 
     - name: Output rendered task definition
       run: |
@@ -69,4 +69,5 @@ jobs:
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
+
 
