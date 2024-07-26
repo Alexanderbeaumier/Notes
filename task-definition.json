@@ -8,7 +8,7 @@
   "taskRoleArn": "arn:aws:iam::314282564487:role/ecsTaskRole",
   "containerDefinitions": [
     {
-      "name": "vigorous_bhaskara",
+      "name": "notes",
       "image": "314282564487.dkr.ecr.us-east-1.amazonaws.com/notes:latest",
       "essential": true,
       "memory": 512,
