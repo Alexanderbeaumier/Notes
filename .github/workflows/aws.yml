@@ -9,6 +9,7 @@ env:
   ECR_REPOSITORY: notes
   ECS_CLUSTER: NotesCluster
   ECS_SERVICE: NotesService
+  TASK_DEFINITION_NAME: note-taking-app
 
 permissions:
   contents: read
@@ -53,7 +54,7 @@ jobs:
         
         # Describe current task definition
         CURRENT_TASK_DEFINITION=$(aws ecs describe-task-definition \
-          --task-definition ${{ env.ECS_SERVICE }} \
+          --task-definition ${{ env.TASK_DEFINITION_NAME }} \
           --region ${{ env.AWS_REGION }} \
           --query "taskDefinition" \
           --output json)
@@ -77,3 +78,5 @@ jobs:
           --task-definition $TASK_DEFINITION_ARN \
           --region ${{ env.AWS_REGION }} \
           --force-new-deployment
+
+
