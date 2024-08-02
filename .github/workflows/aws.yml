@@ -45,53 +45,39 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
-    - name: Create task definition file
+    - name: Register task definition using AWS CLI
       run: |
-        echo '{
-          "family": "note-taking-app",
-          "networkMode": "awsvpc",
-          "requiresCompatibilities": ["FARGATE"],
-          "cpu": "256",
-          "memory": "512",
-          "executionRoleArn": "arn:aws:iam::314282564487:role/ecsTaskExecutionRole",
-          "taskRoleArn": "arn:aws:iam::314282564487:role/ecsTaskRole",
-          "containerDefinitions": [
-            {
-              "name": "notes",
-              "image": "314282564487.dkr.ecr.us-east-1.amazonaws.com/notes:latest",
-              "essential": true,
-              "memory": 512,
-              "cpu": 256,
-              "portMappings": [
-                {
-                  "containerPort": 8080,
-                  "hostPort": 8080
-                }
-              ],
-              "logConfiguration": {
-                "logDriver": "awslogs",
-                "options": {
-                  "awslogs-group": "/ecs/note-taking-app",
-                  "awslogs-region": "us-east-1",
-                  "awslogs-stream-prefix": "ecs"
-                }
-              },
-              "environment": [
-                {
-                  "name": "PORT",
-                  "value": "8080"
-                }
-              ]
-            }
-          ]
-        }' > new-task-definition.json
-
-    - name: Register new task definition
-      id: register-task-def
-      run: |
-        jq --arg IMAGE_URI "$IMAGE_URI" '.containerDefinitions[0].image = $IMAGE_URI' new-task-definition.json > updated-task-definition.json
         aws ecs register-task-definition \
-          --cli-input-json file://updated-task-definition.json \
+          --family note-taking-app \
+          --network-mode awsvpc \
+          --execution-role-arn arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskExecutionRole \
+          --task-role-arn arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskRole \
+          --requires-compatibilities FARGATE \
+          --cpu "256" \
+          --memory "512" \
+          --container-definitions '[{
+            "name": "notes-container",
+            "image": "'"$IMAGE_URI"'",
+            "essential": true,
+            "memory": 512,
+            "cpu": 256,
+            "portMappings": [{
+              "containerPort": 8080,
+              "hostPort": 8080
+            }],
+            "logConfiguration": {
+              "logDriver": "awslogs",
+              "options": {
+                "awslogs-group": "/ecs/note-taking-app",
+                "awslogs-region": "us-east-1",
+                "awslogs-stream-prefix": "ecs"
+              }
+            },
+            "environment": [{
+              "name": "PORT",
+              "value": "8080"
+            }]
+          }]' \
           --region $AWS_REGION
 
     - name: Deploy Amazon ECS task definition
@@ -103,4 +89,5 @@ jobs:
           --task-definition $TASK_DEFINITION \
           --region $AWS_REGION \
           --force-new-deployment
+
 
