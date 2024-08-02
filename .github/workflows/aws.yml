@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: notes
   ECS_SERVICE: NotesService
   ECS_CLUSTER: NotesCluster
-  CONTAINER_NAME: notes-container
+  CONTAINER_NAME: notes
 
 permissions:
   contents: read
@@ -46,7 +46,9 @@ jobs:
         echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
     - name: Create payload file for Lambda
-      run: echo '{"image":"'"$IMAGE_URI"'"}' > payload.json
+      run: |
+        echo "{\"image\":\"$IMAGE_URI\"}" > payload.json
+        cat payload.json  # Output the file content for debugging
 
     - name: Invoke Lambda to Register Task Definition
       run: |
@@ -54,7 +56,7 @@ jobs:
           --function-name registerEcsTaskDefinition \
           --payload file://payload.json \
           response.json
-        cat response.json
+        cat response.json  # Output the Lambda response for debugging
 
     - name: Deploy Amazon ECS task definition
       run: |
@@ -65,5 +67,4 @@ jobs:
           --task-definition $TASK_DEFINITION \
           --region $AWS_REGION \
           --force-new-deployment
-
 
