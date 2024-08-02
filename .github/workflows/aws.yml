@@ -1,3 +1,4 @@
+
 name: Deploy to Amazon ECS
 
 on:
@@ -9,7 +10,7 @@ env:
   ECR_REPOSITORY: notes
   ECS_SERVICE: NotesService
   ECS_CLUSTER: NotesCluster
-  CONTAINER_NAME: notes-container
+  CONTAINER_NAME: notes
 
 permissions:
   contents: read
@@ -45,40 +46,13 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
 
-    - name: Register task definition using AWS CLI
+    - name: Invoke Lambda to Register Task Definition
       run: |
-        aws ecs register-task-definition \
-          --family note-taking-app \
-          --network-mode awsvpc \
-          --execution-role-arn arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskExecutionRole \
-          --task-role-arn arn:aws:iam::YOUR_AWS_ACCOUNT_ID:role/ecsTaskRole \
-          --requires-compatibilities FARGATE \
-          --cpu "256" \
-          --memory "512" \
-          --container-definitions '[{
-            "name": "notes-container",
-            "image": "'"$IMAGE_URI"'",
-            "essential": true,
-            "memory": 512,
-            "cpu": 256,
-            "portMappings": [{
-              "containerPort": 8080,
-              "hostPort": 8080
-            }],
-            "logConfiguration": {
-              "logDriver": "awslogs",
-              "options": {
-                "awslogs-group": "/ecs/note-taking-app",
-                "awslogs-region": "us-east-1",
-                "awslogs-stream-prefix": "ecs"
-              }
-            },
-            "environment": [{
-              "name": "PORT",
-              "value": "8080"
-            }]
-          }]' \
-          --region $AWS_REGION
+        aws lambda invoke \
+          --function-name registerEcsTaskDefinition \
+          --payload '{"image":"'"$IMAGE_URI"'"}' \
+          response.json
+        cat response.json
 
     - name: Deploy Amazon ECS task definition
       run: |
@@ -89,5 +63,6 @@ jobs:
           --task-definition $TASK_DEFINITION \
           --region $AWS_REGION \
           --force-new-deployment
+
 
 
