@@ -9,7 +9,7 @@ env:
   ECR_REPOSITORY: notes
   ECS_SERVICE: NotesService
   ECS_CLUSTER: NotesCluster
-  ECS_TASK_DEFINITION: .aws/task-def.json
+  ECS_TASK_DEFINITION: note-taking-app
   CONTAINER_NAME: notes
 
 permissions:
