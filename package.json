@@ -1,10 +1,12 @@
 {
   "name": "notes",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Node.js project using Express",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "build": "echo \"No build step required for this project.\""
   },
   "keywords": [],
   "author": "",
@@ -15,3 +17,6 @@
     "pg": "^8.12.0"
   }
 }
+
+
+
