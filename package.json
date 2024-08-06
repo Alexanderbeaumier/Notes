@@ -4,9 +4,8 @@
   "description": "Node.js project using Express",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build": "echo \"No build step required for this project.\""
+    "build": "echo \"No build step required for this project.\"",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
