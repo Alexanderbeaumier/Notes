@@ -3,26 +3,29 @@ name: Deploy to AWS Amplify
 on:
   push:
     branches:
-      - main  
+      - main  # Set this to the branch you want to deploy from
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  
+        node-version: '14'  # Set this to your Node.js version
 
-    - name: Install Dependencies
+    - name: Install dependencies
       run: npm install
 
     - name: Build
       run: npm run build  
+
+    - name: Install Amplify CLI
+      run: npm install -g @aws-amplify/cli
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -31,12 +34,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1  
 
-    - name: Install AWS CLI
-      run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip awscliv2.zip
-        sudo ./aws/install
-
     - name: Deploy to AWS Amplify
       run: |
-        aws amplify start-deployment --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch-name main
+        amplify init --amplify '{\"envName\":\"prod\"}' --yes
+        amplify publish --yes
