@@ -5,12 +5,13 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: us-east-1                  
-  ECR_REPOSITORY: notes                   
-  ECS_SERVICE: NotesService         
-  ECS_CLUSTER: NotesCluster               
-  ECS_TASK_DEFINITION: note-taking-app:18 
-  CONTAINER_NAME: notes                 
+  AWS_REGION: us-east-1                   # Your AWS Region
+  ECR_REPOSITORY: notes                   # Your ECR repository name
+  ECS_SERVICE: NotesService               # Your ECS service name
+  ECS_CLUSTER: NotesCluster               # Your ECS cluster name
+  ECS_TASK_DEFINITION: note-taking-app:18 # Your existing ECS task definition name and revision
+  CONTAINER_NAME: notes                   # Container name in your task definition
+
 permissions:
   contents: read
 
