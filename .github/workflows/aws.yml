@@ -5,11 +5,13 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: us-east-1  
-  ECR_REPOSITORY: notes  
-  ECS_SERVICE: NotesService  
-  ECS_CLUSTER: NotesCluster  
-  ECS_TASK_DEFINITION: .aws/task-definition.json  
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: notes
+  ECS_SERVICE: NotesService
+  ECS_CLUSTER: NotesCluster
+  ECS_TASK_DEFINITION: .aws/task-def.json
+  CONTAINER_NAME: notes
+
 permissions:
   contents: read
 
@@ -40,9 +42,6 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
@@ -62,3 +61,4 @@ jobs:
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
+
