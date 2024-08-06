@@ -1,8 +1,8 @@
 {
   "family": "note-taking-app",
-  "networkMode": "awsvpc",
-  "executionRoleArn": "arn:aws:iam::314282564487:role/ECS-cloudwatch-ECSTaskExecutionRole-pGDFKifOLYfY",
   "taskRoleArn": "arn:aws:iam::314282564487:role/ECS-cloudwatch-ECSTaskRole-ZwYoywvCjpov",
+  "executionRoleArn": "arn:aws:iam::314282564487:role/ECS-cloudwatch-ECSTaskExecutionRole-pGDFKifOLYfY",
+  "networkMode": "awsvpc",
   "containerDefinitions": [
     {
       "name": "notes",
@@ -12,9 +12,8 @@
       "essential": true,
       "portMappings": [
         {
-          "containerPort": 8080,
-          "hostPort": 8080,
-          "protocol": "tcp"
+          "containerPort": 80,
+          "hostPort": 80
         }
       ],
       "logConfiguration": {
@@ -27,10 +26,14 @@
       }
     }
   ],
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
+  "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
-  "memory": "512"
+  "memory": "512",
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": ["subnet-0de0934edae5563be", "subnet-0c27a43359b448829"],
+      "securityGroups": ["sg-0e151dc62731b137d"],
+      "assignPublicIp": "ENABLED"
+    }
+  }
 }
-
